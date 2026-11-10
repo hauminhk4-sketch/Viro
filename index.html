@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#090414">
+<title>MINH OFFICIAL - Music Visualizer Studio</title>
+<style>
+:root{--bg:#090414;--panel:#160b2d;--purple:#8b19ff;--pink:#ff24d2;--cyan:#00d9ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:white;font-family:Arial,sans-serif}
+header{padding:16px;text-align:center;background:#100721;border-bottom:1px solid #7e1cff}
+.logo{font-size:26px;font-weight:900;letter-spacing:2px;color:#fff;text-shadow:0 0 12px #a000ff}
+header small{display:block;color:#d6aaff;margin-top:5px}
+main{max-width:1100px;margin:auto;padding:12px}
+.panel{background:linear-gradient(145deg,#1b0c35,#0e0920);border:1px solid #6d20c9;border-radius:15px;padding:14px;margin-bottom:13px;box-shadow:0 0 15px #6000a522}
+h3{margin:0 0 12px;color:#e8caff}
+canvas{width:100%;display:block;background:#05020d;border-radius:12px;border:1px solid #6320a8}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:13px;color:#d9c5f5;margin:8px 0 5px}
+input,select,button{width:100%;padding:12px;border-radius:9px;border:1px solid #6332a0;background:#100821;color:white}
+input[type=color]{height:43px;padding:4px}
+input[type=range]{padding:0;accent-color:#b22aff}
+button{background:linear-gradient(100deg,#6710e8,#c000db);border:0;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.wide{grid-column:1/-1}
+#status{font-size:12px;color:#c8a7ff;margin-top:10px;overflow-wrap:anywhere}
+footer{text-align:center;color:#987db7;font-size:12px;padding:18px}
+@media(min-width:750px){.workspace{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}.workspace .panel{margin:0}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">♛ MINH OFFICIAL</div>
+  <small>MUSIC VISUALIZER STUDIO · CREATE · EDIT · SHARE</small>
+</header>
+
+<main>
+  <div class="workspace">
+    <section class="panel">
+      <h3>🎬 Màn hình xem trước</h3>
+      <canvas id="visual" width="900" height="506"></canvas>
+      <div class="actions">
+        <button id="play">▶ Phát nhạc</button>
+        <button id="stop">■ Dừng</button>
+      </div>
+      <div id="status">Hãy tải một bài nhạc để bắt đầu.</div>
+    </section>
+
+    <section class="panel">
+      <h3>🎵 Tải nhạc và hình nền</h3>
+      <label>Chọn file nhạc</label>
+      <input id="audioFile" type="file" accept="audio/*">
+      <label>Chọn ảnh nền</label>
+      <input id="imageFile" type="file" accept="image/*">
+      <label>Tên bài hát</label>
+      <input id="songTitle" value="MINH OFFICIAL">
+      <label>Tên nghệ sĩ</label>
+      <input id="artist" value="Music is life">
+      <label>Kiểu sóng nhạc</label>
+      <select id="style">
+        <option value="bars">Equalizer - Cột nhạc</option>
+        <option value="circle">Vòng tròn âm thanh</option>
+        <option value="wave">Sóng ngang</option>
+        <option value="mirror">Cột đối xứng</option>
+      </select>
+      <label>Màu sóng nhạc</label>
+      <input id="waveColor" type="color" value="#b52cff">
+      <label>Màu chữ</label>
+      <input id="textColor" type="color" value="#ffffff">
+      <label>Độ sáng hiệu ứng</label>
+      <input id="glow" type="range" min="0" max="40" value="20">
+      <label>Tỷ lệ video</label>
+      <select id="ratio">
+        <option value="16:9">16:9 - YouTube</option>
+        <option value="9:16">9:16 - TikTok / Shorts</option>
+        <option value="1:1">1:1 - Vuông</option>
+      </select>
+      <div class="actions">
+        <button id="apply">Cập nhật</button>
+        <button id="export">⬇ Xuất video</button>
+      </div>
+    </section>
+  </div>
+  <footer>MINH OFFICIAL · Music Visualizer Studio</footer>
+</main>
+
+<audio id="audio" playsinline></audio>
+
+<script>
+const canvas=document.getElementById('visual');
+const ctx=canvas.getContext('2d');
+const audio=document.getElementById('audio');
+const statusBox=document.getElementById('status');
+
+let audioContext=null, analyser=null, source=null, audioStream=null;
+let background=null, animationId=null, recording=false;
+let data=new Uint8Array(128);
+let title='MINH OFFICIAL', artist='Music is life';
+
+function resizeCanvas(){
+  const ratio=document.getElementById('ratio').value;
+  if(ratio==='9:16'){canvas.width=540;canvas.height=960}
+  else if(ratio==='1:1'){canvas.width=800;canvas.height=800}
+  else{canvas.width=900;canvas.height=506}
+  draw();
+}
+function setupAudio(){
+  if(audioContext)return;
+  audioContext=new(window.AudioContext||window.webkitAudioContext)();
+  analyser=audioContext.createAnalyser();
+  analyser.fftSize=256;
+  analyser.smoothingTimeConstant=.82;
+  source=audioContext.createMediaElementSource(audio);
+  audioStream=audioContext.createMediaStreamDestination();
+  source.connect(analyser);
+  analyser.connect(audioContext.destination);
+  analyser.connect(audioStream);
+}
+function draw(){
+  const w=canvas.width,h=canvas.height;
+  const color=document.getElementById('waveColor').value;
+  const textColor=document.getElementById('textColor').value;
+  const glow=Number(document.getElementById('glow').value);
+  const style=document.getElementById('style').value;
+
+  ctx.clearRect(0,0,w,h);
+  const bg=ctx.createLinearGradient(0,0,w,h);
+  bg.addColorStop(0,'#100326');bg.addColorStop(1,'#03020b');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+
+  if(background){
+    ctx.save();ctx.globalAlpha=.48;
+    const scale=Math.max(w/background.width,h/background.height);
+    const iw=background.width*scale,ih=background.height*scale;
+    ctx.drawImage(background,(w-iw)/2,(h-ih)/2,iw,ih);
+    ctx.restore();
+  }
+
+  if(analyser)analyser.getByteFrequencyData(data);
+  else data.fill(8);
+
+  ctx.save();
+  ctx.shadowBlur=glow;ctx.shadowColor=color;
+  ctx.strokeStyle=color;ctx.fillStyle=color;
+  ctx.lineWidth=3;
+
+  if(style==='bars'||style==='mirror'){
+    const count=64,barGap=w/count;
+    for(let i=0;i<count;i++){
+      const v=data[i]||5;
+      const bh=Math.max(4,(v/255)*h*.32);
+      const x=i*barGap+barGap*.15;
+      const bw=barGap*.7;
+      if(style==='bars')ctx.fillRect(x,h*.72-bh,bw,bh);
+      else{
+        ctx.fillRect(x,h/2-bh/2,bw,bh/2);
+        ctx.fillRect(x,h/2,bw,bh/2);
+      }
+    }
+  }else if(style==='circle'){
+    const cx=w/2,cy=h*.48,r=Math.min(w,h)*.19;
+    for(let i=0;i<128;i++){
+      const angle=i/128*Math.PI*2;
+      const v=data[i%data.length]||5;
+      const len=12+(v/255)*Math.min(w,h)*.12;
+      const x1=cx+Math.cos(angle)*r;
+      const y1=cy+Math.sin(angle)*r;
+      const x2=cx+Math.cos(angle)*(r+len);
+      const y2=cy+Math.sin(angle)*(r+len);
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    }
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+  }else{
+    ctx.beginPath();
+    for(let x=0;x<w;x++){
+      const i=Math.floor(x/w*data.length);
+      const y=h*.55+(data[i]-128)*h*.002;
+      if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  ctx.textAlign='center';
+  ctx.fillStyle=textColor;
+  ctx.shadowColor=color;ctx.shadowBlur=glow;
+  ctx.font=`bold ${Math.max(22,w*.045)}px Arial`;
+  ctx.fillText(title,w/2,h*.86);
+  ctx.shadowBlur=0;
+  ctx.font=`${Math.max(14,w*.022)}px Arial`;
+  ctx.fillText(artist,w/2,h*.92);
+  ctx.textAlign='left';
+
+  if(!recording)animationId=requestAnimationFrame(draw);
+}
+function startDrawing(){
+  if(animationId)cancelAnimationFrame(animationId);
+  draw();
+}
+
+document.getElementById('audioFile').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  audio.src=URL.createObjectURL(file);
+  statusBox.textContent='Đã tải nhạc: '+file.name;
+  setupAudio();startDrawing();
+});
+document.getElementById('imageFile').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  const img=new Image();
+  img.onload=()=>{background=img;startDrawing()};
+  img.src=URL.createObjectURL(file);
+});
+document.getElementById('play').onclick=async()=>{
+  if(!audio.src){statusBox.textContent='Bạn cần tải nhạc trước.';return}
+  setupAudio();
+  if(audioContext.state==='suspended')await audioContext.resume();
+  await audio.play();startDrawing();
+};
+document.getElementById('stop').onclick=()=>audio.pause();
+document.getElementById('apply').onclick=()=>{
+  title=document.getElementById('songTitle').value||'MINH OFFICIAL';
+  artist=document.getElementById('artist').value||'';
+  resizeCanvas();startDrawing();
+};
+document.getElementById('ratio').onchange=resizeCanvas;
+document.getElementById('style').onchange=startDrawing;
+document.getElementById('waveColor').oninput=startDrawing;
+document.getElementById('textColor').oninput=startDrawing;
+document.getElementById('glow').oninput=startDrawing;
+
+document.getElementById('export').onclick=async()=>{
+  if(!audio.src){statusBox.textContent='Hãy tải nhạc trước khi xuất video.';return}
+  setupAudio();
+  if(audioContext.state==='suspended')await audioContext.resume();
+  if(!canvas.captureStream||!window.MediaRecorder){
+    statusBox.textContent='Trình duyệt này chưa hỗ trợ quay video. Hãy thử Chrome mới nhất.';
+    return;
+  }
+  const canvasStream=canvas.captureStream(30);
+  const tracks=[...canvasStream.getVideoTracks(),...audioStream.stream.getAudioTracks()];
+  const combined=new MediaStream(tracks);
+  const mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
+    .find(t=>MediaRecorder.isTypeSupported(t));
+  if(!mime){statusBox.textContent='Không tìm thấy định dạng video được hỗ trợ.';return}
+
+  const chunks=[];
+  const recorder=new MediaRecorder(combined,{mimeType:mime});
+  recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+  recorder.onstop=()=>{
+    const blob=new Blob(chunks,{type:'video/webm'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='MINH-OFFICIAL-Visualizer.webm';
+    a.click();
+    URL.revokeObjectURL(url);
+    tracks.forEach(t=>t.stop());
+    recording=false;
+    statusBox.textContent='Đã tạo video WebM. Kiểm tra thư mục Tải xuống.';
+    startDrawing();
+  };
+  audio.currentTime=0;
+  await audio.play();
+  recording=true;
+  recorder.start(500);
+  statusBox.textContent='Đang xuất video... Hãy để trình duyệt mở đến khi hoàn tất.';
+  audio.onended=()=>{if(recorder.state!=='inactive')recorder.stop()};
+};
+resizeCanvas();
+</script>
+</body>
+</html>
