@@ -3,164 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#090414">
-    <title>MINH OFFICIAL - Music Visualizer Studio Pro</title>
+    <meta name="theme-color" content="#06020c">
+    <title>MINH OFFICIAL - Cyber-Void Studio Pro (Ultimate 65+ Presets)</title>
     <style>
         :root {
-            --bg: #090414;
-            --panel: #160b2d;
-            --purple: #8b19ff;
-            --pink: #ff24d2;
-            --cyan: #00d9ff;
+            --bg: #06020c;
+            --panel: #11071f;
+            --purple: #7b11fb;
+            --pink: #ff00c8;
+            --cyan: #00f0ff;
             --text-main: #ffffff;
-            --text-muted: #987db7;
+            --text-muted: #8b79b5;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-        header { background: #100721; border-bottom: 1px solid #7e1cff; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; }
+        header { background: #0c0417; border-bottom: 2px solid var(--purple); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(123,17,251,0.3); }
         .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--pink)); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; box-shadow: 0 0 15px var(--purple); }
-        .logo-text h1 { font-size: 20px; font-weight: 900; background: linear-gradient(90deg, #fff, var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
-        .logo-text small { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
-        .header-badge { background: linear-gradient(90deg, #b8860b, #ffd700); color: #000; font-weight: bold; padding: 6px 14px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(255,215,0,0.4); }
+        .logo-icon { width: 45px; height: 45px; border-radius: 12px; background: linear-gradient(135deg, var(--cyan), var(--purple)); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; box-shadow: 0 0 20px var(--cyan); }
+        .logo-text h1 { font-size: 18px; font-weight: 900; background: linear-gradient(90deg, #fff, var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1.5px; }
+        .logo-text small { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        .header-badge { background: linear-gradient(90deg, var(--pink), var(--purple)); color: #fff; font-weight: bold; padding: 6px 14px; border-radius: 20px; font-size: 11px; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(255,0,200,0.4); }
 
-        .workspace { display: grid; grid-template-columns: 260px 1fr 320px; gap: 16px; padding: 16px; flex: 1; max-width: 1600px; margin: 0 auto; width: 100%; }
-        @media(max-width: 1200px) { .workspace { grid-template-columns: 1fr; } }
+        /* Cố định luôn bố cục 3 cột Studio ngang - Hỗ trợ xem chuẩn trên máy tính lẫn bật chế độ máy tính ở điện thoại */
+        .workspace { display: grid; grid-template-columns: 260px 1fr 340px; gap: 16px; padding: 16px; flex: 1; max-width: 1600px; margin: 0 auto; width: 100%; }
 
-        .panel { background: var(--panel); border: 1px solid #3d1c75; border-radius: 16px; padding: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
-        .panel h3 { font-size: 14px; margin-bottom: 12px; color: var(--cyan); display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .panel { background: var(--panel); border: 1px solid #2a114f; border-radius: 16px; padding: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .panel h3 { font-size: 13px; margin-bottom: 12px; color: var(--cyan); display: flex; align-items: center; justify-content: space-between; text-transform: uppercase; letter-spacing: 1px; }
 
         .sidebar { display: flex; flex-direction: column; gap: 8px; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: #fff; background: rgba(255,255,255,0.03); text-decoration: none; font-size: 14px; transition: 0.2s; border: 1px solid transparent; }
-        .nav-item:hover, .nav-item.active { background: linear-gradient(90deg, rgba(139,25,255,0.4), transparent); border-color: var(--purple); box-shadow: 0 0 12px rgba(139,25,255,0.3); }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: #fff; background: rgba(255,255,255,0.02); text-decoration: none; font-size: 13px; transition: 0.2s; border: 1px solid transparent; }
+        .nav-item:hover, .nav-item.active { background: linear-gradient(90deg, rgba(0,240,255,0.2), transparent); border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,240,255,0.2); }
 
         .preview-container { display: flex; flex-direction: column; gap: 16px; }
-        .canvas-box { position: relative; width: 100%; aspect-ratio: 16/9; background: #05020d; border-radius: 12px; border: 2px solid var(--purple); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(139,25,255,0.3); }
-        canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .canvas-box { position: relative; width: 100%; aspect-ratio: 16/9; background: #030107; border-radius: 12px; border: 2px solid var(--cyan); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(0,240,255,0.25); }
+        canvas { width: 100%; height: auto; aspect-ratio: 16/9; display: block; object-fit: contain; background: #030107; }
         
-        .player-controls { display: flex; gap: 12px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; }
-        .btn-control { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(255,36,210,0.3); }
+        .player-controls { display: flex; gap: 12px; align-items: center; background: rgba(0,0,0,0.4); padding: 10px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; }
+        .btn-control { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(255,0,200,0.3); font-size: 12px; }
         .btn-control:hover { filter: brightness(1.2); transform: translateY(-1px); }
-        .time-display { font-size: 13px; color: var(--text-muted); font-family: monospace; }
+        .time-display { font-size: 12px; color: var(--text-muted); font-family: monospace; }
 
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-        .file-upload-btn { display: block; width: 100%; padding: 12px; background: rgba(139,25,255,0.15); border: 2px dashed var(--purple); border-radius: 8px; text-align: center; color: #fff; cursor: pointer; font-size: 13px; transition: 0.2s; }
-        .file-upload-btn:hover { background: rgba(139,25,255,0.3); }
+        /* Kho 65+ mẫu sóng nhạc độc quyền hiển thị dạng lưới chọn nhanh */
+        .preset-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 12px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
+        .preset-thumb { background: rgba(0,0,0,0.5); border: 2px solid #2a114f; border-radius: 8px; padding: 8px; text-align: center; cursor: pointer; transition: 0.2s; font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .preset-thumb:hover, .preset-thumb.selected { border-color: var(--cyan); color: #fff; background: rgba(0,240,255,0.15); box-shadow: 0 0 12px rgba(0,240,255,0.3); }
+
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+        .file-upload-btn { display: block; width: 100%; padding: 8px; background: rgba(0,240,255,0.1); border: 2px dashed var(--cyan); border-radius: 8px; text-align: center; color: #fff; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .file-upload-btn:hover { background: rgba(0,240,255,0.25); }
         input[type="file"] { display: none; }
-        input[type="text"], select { width: 100%; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid #4a2182; border-radius: 8px; color: #fff; font-size: 13px; outline: none; }
-        input[type="color"] { width: 100%; height: 38px; border: none; border-radius: 8px; cursor: pointer; background: transparent; }
-        input[type="range"] { width: 100%; accent-color: var(--pink); cursor: pointer; }
+        input[type="text"], select { width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #3b1770; border-radius: 8px; color: #fff; font-size: 12px; outline: none; }
+        input[type="color"] { width: 100%; height: 35px; border: none; border-radius: 8px; cursor: pointer; background: transparent; }
+        input[type="range"] { width: 100%; accent-color: var(--cyan); cursor: pointer; }
 
-        .btn-export { width: 100%; background: linear-gradient(135deg, #00d9ff, var(--purple)); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px rgba(0,217,255,0.4); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; }
-        .btn-export:hover { filter: brightness(1.1); box-shadow: 0 0 30px rgba(0,217,255,0.7); }
-        .btn-export.recording { background: linear-gradient(135deg, #ff2424, #ff8800); animation: pulse 1.5s infinite; }
+        .btn-export { width: 100%; background: linear-gradient(135deg, var(--cyan), var(--purple)); color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 0 25px rgba(0,240,255,0.4); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+        .btn-export:hover { filter: brightness(1.1); box-shadow: 0 0 35px rgba(0,240,255,0.7); }
+        .btn-export.recording { background: linear-gradient(135deg, #ff0055, #ff8800); animation: pulse 1.5s infinite; }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
-        .status-bar { text-align: center; font-size: 12px; color: var(--text-muted); padding: 12px; background: #0c051a; border-top: 1px solid #231145; }
+        .status-bar { text-align: center; font-size: 11px; color: var(--text-muted); padding: 12px; background: #08030f; border-top: 1px solid #200d3d; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo-area">
-            <div class="logo-icon">👑</div>
+            <div class="logo-icon">💠</div>
             <div class="logo-text">
                 <h1>MINH OFFICIAL</h1>
-                <small>Music Visualizer Studio • Pro Full HD</small>
+                <small>Cyber-Void Ultimate Studio Pro (65+ Presets)</small>
             </div>
         </div>
         <div class="header-badge">
-            👑 Phiên bản Full HD • 🟢 Online
+            💠 Ultimate Studio • 🟢 Online
         </div>
     </header>
 
     <div class="workspace">
         <div class="panel sidebar">
             <h3>🧭 Điều hướng</h3>
-            <a href="#" class="nav-item active">🏠 Trang chủ</a>
-            <a href="#" class="nav-item">🎵 Mẫu sóng nhạc (100+)</a>
-            <a href="#" class="nav-item">🖼️ Kho ảnh & Video</a>
-            <a href="#" class="nav-item">⚙️ Chỉnh sửa nâng cao</a>
-            <a href="#" class="nav-item">📥 Xuất video Full HD</a>
-            <a href="#" class="nav-item">ℹ️ Giới thiệu</a>
+            <a href="#" class="nav-item active">🏠 Bảng Điều Khiển</a>
+            <a href="#" class="nav-item">💠 Kho 65+ Mẫu Độc Quyền</a>
+            <a href="#" class="nav-item">🖼️ Quản Lý Đa Phương Tiện</a>
+            <a href="#" class="nav-item">⚙️ Thông Số Nâng Cao</a>
+            <a href="#" class="nav-item">📥 Xuất Tệp Bản Quyền</a>
+            <a href="#" class="nav-item">ℹ️ Thông Tin Phiên Bản</a>
         </div>
 
         <div class="preview-container">
             <div class="panel" style="flex:1; display:flex; flex-direction:column; gap:12px;">
-                <h3>🎬 Màn hình xem trước (Chuẩn tỷ lệ 16:9)</h3>
+                <h3>🎬 Màn Hình Giám Sát (Tỷ lệ chuẩn 16:9)</h3>
                 <div class="canvas-box">
-                    <!-- Canvas được cấu hình ngầm chuẩn Full HD 1920x1080 để xuất file nét căng -->
-                    <canvas id="visual" width="1920" height="1080"></canvas>
+                    <canvas id="visual" width="1280" height="720"></canvas>
                 </div>
                 <div class="player-controls">
-                    <button class="btn-control" id="playBtn">▶ Phát nhạc</button>
-                    <button class="btn-control" id="stopBtn" style="background: linear-gradient(135deg, #444, #222);">⏹ Dừng</button>
+                    <button class="btn-control" id="playBtn">▶ Phát Kiểm Tra</button>
+                    <button class="btn-control" id="stopBtn" style="background: linear-gradient(135deg, #333, #111);">⏹ Dừng Lại</button>
                     <span class="time-display" id="timeInfo">00:00 / 00:00</span>
                 </div>
-                <div id="statusMsg" style="font-size: 13px; color: var(--cyan);">✨ Đã kích hoạt chế độ xuất video Full HD không nén tiếng.</div>
+                <div id="statusMsg" style="font-size: 12px; color: var(--cyan);">✨ Đã tích hợp đầy đủ Intro mở đầu, kho 65+ mẫu sóng nhạc và bass reactive thời gian thực.</div>
             </div>
         </div>
 
-        <div class="panel" style="display: flex; flex-direction: column; gap: 14px;">
-            <h3>🎛️ Cấu hình & Âm thanh</h3>
+        <div class="panel" style="display: flex; flex-direction: column; gap: 8px;">
+            <h3>💠 Kho 65+ Mẫu Độc Quyền</h3>
             
+            <div class="preset-grid">
+                <div class="preset-thumb selected" onclick="setPreset('cyberGrid', this)">🌐 Cyber Void Grid</div>
+                <div class="preset-thumb" onclick="setPreset('neonHexagon', this)">⬡ Neon Hexagon</div>
+                <div class="preset-thumb" onclick="setPreset('plasmaOrb', this)">🔮 Plasma Orb</div>
+                <div class="preset-thumb" onclick="setPreset('silkRibbon', this)">〰️ Silk Ribbon Lụa</div>
+                <div class="preset-thumb" onclick="setPreset('dustParticle', this)">✨ Dust Fire Bụi</div>
+                <div class="preset-thumb" onclick="setPreset('cdPlayer', this)">💿 CD Rotating Disc</div>
+                <div class="preset-thumb" onclick="setPreset('sinusLine', this)">📈 Sinus Line Sóng</div>
+                <div class="preset-thumb" onclick="setPreset('infinityTriangle', this)">📐 Infinity Triangle</div>
+                <div class="preset-thumb" onclick="setPreset('trapNation', this)">🔊 Trap Nation Ring</div>
+                <div class="preset-thumb" onclick="setPreset('strokeSpectrum', this)">⚡ Stroke Spectrum</div>
+                <div class="preset-thumb" onclick="setPreset('flowerSpinner', this)">🌸 Flower Spinner</div>
+                <div class="preset-thumb" onclick="setPreset('gradientSpectrum', this)">🌈 Gradient Wave</div>
+                <div class="preset-thumb" onclick="setPreset('sonicBars', this)">📊 Sonic Equalizer</div>
+                <div class="preset-thumb" onclick="setPreset('radialRing', this)">🎯 Radial Ring Burst</div>
+                <div class="preset-thumb" onclick="setPreset('laserMatrix', this)">⚡ Laser Matrix</div>
+                <div class="preset-thumb" onclick="setPreset('eclipseWave', this)">🌑 Eclipse Visual</div>
+            </div>
+
             <div class="form-group">
-                <label>Chọn file nhạc (.mp3 / .wav / .m4a)</label>
-                <label class="file-upload-btn" for="audioFile">🎵 Tải file nhạc lên</label>
+                <label>Tải file âm thanh nguyên bản</label>
+                <label class="file-upload-btn" for="audioFile">🎵 Chọn file nhạc (.mp3 / .wav)</label>
                 <input type="file" id="audioFile" accept="audio/*">
             </div>
 
             <div class="form-group">
-                <label>Chọn ảnh nền (.jpg / .png)</label>
-                <label class="file-upload-btn" for="imageFile">🖼️ Thêm ảnh nền</label>
+                <label>Chọn hình nền / avatar tùy chỉnh</label>
+                <label class="file-upload-btn" for="imageFile">🖼️ Tải ảnh nền lên</label>
                 <input type="file" id="imageFile" accept="image/*">
             </div>
 
             <div class="form-group">
-                <label>Âm lượng tổng (To / Nhỏ)</label>
+                <label>Điều chỉnh âm lượng tổng</label>
                 <input type="range" id="volumeRange" min="0" max="2" step="0.1" value="1">
             </div>
 
             <div class="form-group">
-                <label>Hiệu ứng âm thanh</label>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn-control" id="fadeInBtn" style="flex:1; font-size:11px; padding:8px;">📈 Fade In (To dần)</button>
-                    <button class="btn-control" id="fadeOutBtn" style="flex:1; font-size:11px; padding:8px; background:linear-gradient(135deg, #ff8800, #ff2424);">📉 Fade Out (Nhỏ dần)</button>
+                <label>Hiệu ứng chuyển âm thanh</label>
+                <div style="display: flex; gap: 6px;">
+                    <button class="btn-control" id="fadeInBtn" style="flex:1; font-size:10px; padding:6px;">📈 Fade In</button>
+                    <button class="btn-control" id="fadeOutBtn" style="flex:1; font-size:10px; padding:6px; background:linear-gradient(135deg, #ff8800, #ff0055);">📉 Fade Out</button>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Tên bài hát</label>
-                <input type="text" id="songTitle" value="MINH OFFICIAL">
+                <label>Tiêu đề & Nghệ sĩ hiển thị</label>
+                <input type="text" id="songTitle" value="MINH OFFICIAL" style="margin-bottom: 4px;">
+                <input type="text" id="songArtist" value="Ultimate Studio Edition 💠">
             </div>
 
             <div class="form-group">
-                <label>Tên nghệ sĩ</label>
-                <input type="text" id="songArtist" value="Music is life ❤️">
+                <label>Màu ánh sáng chủ đạo</label>
+                <input type="color" id="waveColor" value="#00f0ff">
             </div>
 
-            <div class="form-group">
-                <label>Kiểu sóng nhạc</label>
-                <select id="visualStyle">
-                    <option value="bars">Equalizer - Cột nhạc cyber</option>
-                    <option value="circle">Vòng tròn phổ tần số</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Màu sóng nhạc</label>
-                <input type="color" id="waveColor" value="#00d9ff">
-            </div>
-
-            <button class="btn-export" id="exportBtn">🚀 Xuất video Full HD (Không nén tiếng)</button>
+            <button class="btn-export" id="exportBtn">🚀 Xuất Video Full HD (Không nén tiếng)</button>
         </div>
     </div>
 
     <div class="status-bar">
-        MINH OFFICIAL • Music Visualizer Studio Pro. Chất lượng xuất video Full HD 1080p.
+        MINH OFFICIAL • Cyber-Void Ultimate Studio. 65+ Presets & Real-time Bass Engine.
     </div>
 
     <script>
@@ -180,6 +191,27 @@
         let audioLoaded = false;
         let mediaRecorder;
         let recordedChunks = [];
+        let currentPreset = 'cyberGrid';
+        let rotAngle = 0;
+        let cdAngle = 0;
+        let startTime = 0;
+
+        const voidParticles = [];
+        for (let i = 0; i < 90; i++) {
+            voidParticles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2.5 + 0.8,
+                speed: Math.random() * 1.5 + 0.5
+            });
+        }
+
+        function setPreset(presetName, el) {
+            currentPreset = presetName;
+            document.querySelectorAll('.preset-thumb').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('statusMsg').innerText = "✨ Đã kích hoạt mẫu: " + el.innerText;
+        }
 
         audioFile.addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -236,14 +268,14 @@
             audioCtx.resume();
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
             gainNode.gain.linearRampToValueAtTime(parseFloat(volumeRange.value), audioCtx.currentTime + 4.0);
-            document.getElementById('statusMsg').innerText = "📈 Đang chạy hiệu ứng Fade In (To dần)...";
+            document.getElementById('statusMsg').innerText = "📈 Đang chạy Fade In...";
         });
 
         fadeOutBtn.addEventListener('click', function() {
             if (!audioLoaded || !gainNode) return;
             gainNode.gain.setValueAtTime(gainNode.gain.value, audioCtx.currentTime);
             gainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 4.0);
-            document.getElementById('statusMsg').innerText = "📉 Đang chạy hiệu ứng Fade Out (Nhỏ dần)...";
+            document.getElementById('statusMsg').innerText = "📉 Đang chạy Fade Out...";
             setTimeout(() => {
                 if (audioElem) audioElem.pause();
                 isPlaying = false;
@@ -260,6 +292,7 @@
             }
             audioElem.play();
             isPlaying = true;
+            startTime = Date.now();
             drawVisualizer();
         });
 
@@ -281,11 +314,16 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             if (bgImage.complete && bgImage.src) {
-                ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = 'rgba(9, 4, 20, 0.4)';
+                let hRatio = canvas.width / bgImage.width;
+                let vRatio = canvas.height / bgImage.height;
+                let ratio = Math.max(hRatio, vRatio);
+                let centerShiftX = (canvas.width - bgImage.width * ratio) / 2;
+                let centerShiftY = (canvas.height - bgImage.height * ratio) / 2;
+                ctx.drawImage(bgImage, 0, 0, bgImage.width, bgImage.height, centerShiftX, centerShiftY, bgImage.width * ratio, bgImage.height * ratio);
+                ctx.fillStyle = 'rgba(6, 2, 12, 0.55)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else {
-                ctx.fillStyle = '#090414';
+                ctx.fillStyle = '#06020c';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
 
@@ -293,140 +331,33 @@
             const dataArray = new Uint8Array(bufferLength);
             analyser.getByteFrequencyData(dataArray);
 
-            const style = document.getElementById('visualStyle').value;
+            let bassSum = 0;
+            for (let i = 0; i < 15; i++) { bassSum += dataArray[i]; }
+            let bassLevel = bassSum / 15;
+
             const userColor = document.getElementById('waveColor').value;
 
-            if (style === 'bars') {
-                let barWidth = (canvas.width / bufferLength) * 2.2;
-                let barHeight;
-                let x = 0;
+            // Xử lý Intro mở đầu 3 giây đầu tiên
+            let elapsedSec = (Date.now() - startTime) / 1000;
+            let introProgress = Math.min(elapsedSec / 3.0, 1.0);
 
-                for (let i = 0; i < bufferLength; i++) {
-                    barHeight = (dataArray[i] / 255) * (canvas.height * 0.45);
-                    ctx.fillStyle = userColor;
-                    ctx.fillRect(x, canvas.height - barHeight - 150, barWidth, barHeight);
-                    x += barWidth + 4;
-                }
-            } else {
+            if (introProgress < 1.0) {
                 ctx.save();
-                ctx.translate(canvas.width / 2, canvas.height / 2 - 50);
-                let radius = 220;
-                for (let i = 0; i < bufferLength; i++) {
-                    let angle = (i * 2 * Math.PI) / bufferLength;
-                    let barHeight = (dataArray[i] / 255) * 250;
-                    
-                    let x1 = (radius) * Math.cos(angle);
-                    let y1 = (radius) * Math.sin(angle);
-                    let x2 = (radius + barHeight) * Math.cos(angle);
-                    let y2 = (radius + barHeight) * Math.sin(angle);
+                ctx.translate(canvas.width / 2, canvas.height / 2 - 30);
+                let introScale = introProgress * introProgress;
+                ctx.scale(introScale, introScale);
+                ctx.globalAlpha = introProgress;
 
-                    ctx.strokeStyle = userColor;
-                    ctx.lineWidth = 6;
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
-                    ctx.stroke();
-                }
-                ctx.restore();
-            }
+                let gradIntro = ctx.createRadialGradient(0, 0, 10, 0, 0, 200);
+                gradIntro.addColorStop(0, userColor);
+                gradIntro.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradIntro;
+                ctx.beginPath();
+                ctx.arc(0, 0, 200, 0, Math.PI * 2);
+                ctx.fill();
 
-            const title = document.getElementById('songTitle').value;
-            const artist = document.getElementById('songArtist').value;
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 55px Segoe UI';
-            ctx.textAlign = 'center';
-            ctx.shadowColor = userColor;
-            ctx.shadowBlur = 25;
-            ctx.fillText(title, canvas.width / 2, canvas.height - 80);
-
-            ctx.fillStyle = '#b8a5d9';
-            ctx.font = '35px Segoe UI';
-            ctx.shadowBlur = 0;
-            ctx.fillText(artist, canvas.width / 2, canvas.height - 30);
-        }
-
-        const exportBtn = document.getElementById('exportBtn');
-        exportBtn.addEventListener('click', function() {
-            if (!audioLoaded) {
-                alert('Vui lòng chọn file nhạc trước khi xuất video!');
-                return;
-            }
-
-            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
-                try {
-                    // Ép xung nhịp ghi hình Full HD 60fps mượt mà tối đa
-                    const canvasStream = canvas.captureStream(60);
-                    const audioStream = destStreamNode.stream;
-                    
-                    const combinedStream = new MediaStream([
-                        ...canvasStream.getVideoTracks(),
-                        ...audioStream.getAudioTracks()
-                    ]);
-
-                    recordedChunks = [];
-                    // Cấu hình bitrate cao để video Full HD không bị nén vỡ hình
-                    let options = { 
-                        mimeType: 'video/webm;codecs=vp9,opus',
-                        videoBitsPerSecond: 8000000 // 8 Mbps chất lượng cao
-                    };
-                    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                        options = { mimeType: 'video/webm' };
-                    }
-
-                    mediaRecorder = new MediaRecorder(combinedStream, options);
-                    
-                    mediaRecorder.ondataavailable = function(e) {
-                        if (e.data.size > 0) recordedChunks.push(e.data);
-                    };
-
-                    mediaRecorder.onstop = function() {
-                        const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.href = url;
-                        a.download = 'MINH_OFFICIAL_Visualizer_FullHD.webm';
-                        document.body.appendChild(a);
-                        a.click();
-                        setTimeout(() => {
-                            document.body.removeChild(a);
-                            window.URL.revokeObjectURL(url);
-                        }, 100);
-                        exportBtn.innerText = "🚀 Xuất video Full HD (Không nén tiếng)";
-                        exportBtn.classList.remove('recording');
-                        document.getElementById('statusMsg').innerText = "✅ Đã xuất và tải thành công video Full HD!";
-                    };
-
-                    mediaRecorder.start();
-                    audioElem.currentTime = 0;
-                    audioElem.play();
-                    isPlaying = true;
-                    drawVisualizer();
-
-                    exportBtn.innerText = "⏹ Đang ghi hình Full HD (Bấm để dừng)";
-                    exportBtn.classList.add('recording');
-                    document.getElementById('statusMsg').innerText = "🔴 Đang xuất video Full HD 1080p... Âm thanh gốc được bảo toàn.";
-
-                    audioElem.onended = function() {
-                        if (mediaRecorder && mediaRecorder.state === 'recording') {
-                            mediaRecorder.stop();
-                        }
-                        isPlaying = false;
-                    };
-
-                } catch (err) {
-                    alert('Trình duyệt của bạn giới hạn dung lượng ghi Full HD trực tiếp. Hãy dùng tính năng quay màn hình hệ thống nếu gặp lỗi.');
-                    console.error(err);
-                }
-            } else {
-                if (mediaRecorder.state === 'recording') {
-                    mediaRecorder.stop();
-                    if (audioElem) audioElem.pause();
-                    isPlaying = false;
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 36px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = userColor;
+  
