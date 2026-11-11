@@ -1,385 +1,180 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#06020c">
-    <title>MINH OFFICIAL - Cyber-Void Studio Pro</title>
-    <style>
-        :root {
-            --bg: #06020c;
-            --panel: #11071f;
-            --purple: #7b11fb;
-            --pink: #ff00c8;
-            --cyan: #00f0ff;
-            --text-main: #ffffff;
-            --text-muted: #8b79b5;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
-
-        header { background: #0c0417; border-bottom: 2px solid var(--purple); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(123,17,251,0.3); }
-        .logo-area { display: flex; align-items: center; gap: 10px; }
-        .logo-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, var(--cyan), var(--purple)); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; box-shadow: 0 0 15px var(--cyan); }
-        .logo-text h1 { font-size: 16px; font-weight: 900; background: linear-gradient(90deg, #fff, var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .logo-text small { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .header-badge { background: linear-gradient(90deg, var(--pink), var(--purple)); color: #fff; font-weight: bold; padding: 5px 12px; border-radius: 15px; font-size: 10px; box-shadow: 0 0 10px rgba(255,0,200,0.4); }
-
-        /* Giao diện 3 cột linh hoạt, tự động co giãn chuẩn trên cả điện thoại và máy tính */
-        .workspace { display: grid; grid-template-columns: 240px 1fr 300px; gap: 12px; padding: 12px; flex: 1; max-width: 1500px; margin: 0 auto; width: 100%; }
-        @media(max-width: 1024px) { .workspace { grid-template-columns: 1fr; } }
-
-        .panel { background: var(--panel); border: 1px solid #2a114f; border-radius: 14px; padding: 14px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
-        .panel h3 { font-size: 12px; margin-bottom: 10px; color: var(--cyan); display: flex; align-items: center; justify-content: space-between; text-transform: uppercase; letter-spacing: 1px; }
-
-        .sidebar { display: flex; flex-direction: column; gap: 6px; }
-        .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; color: #fff; background: rgba(255,255,255,0.02); text-decoration: none; font-size: 12px; transition: 0.2s; border: 1px solid transparent; }
-        .nav-item:hover, .nav-item.active { background: linear-gradient(90deg, rgba(0,240,255,0.2), transparent); border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,240,255,0.2); }
-
-        .preview-container { display: flex; flex-direction: column; gap: 12px; }
-        .canvas-box { position: relative; width: 100%; aspect-ratio: 16/9; background: #030107; border-radius: 10px; border: 2px solid var(--cyan); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(0,240,255,0.2); }
-        canvas { width: 100%; height: 100%; display: block; object-fit: contain; background: #030107; }
-        
-        .player-controls { display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.4); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; }
-        .btn-control { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 3px 12px rgba(255,0,200,0.3); font-size: 11px; }
-        .btn-control:hover { filter: brightness(1.2); }
-        .time-display { font-size: 11px; color: var(--text-muted); font-family: monospace; }
-
-        .preset-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px; max-height: 180px; overflow-y: auto; padding-right: 4px; }
-        .preset-thumb { background: rgba(0,0,0,0.5); border: 1px solid #2a114f; border-radius: 6px; padding: 6px; text-align: center; cursor: pointer; transition: 0.2s; font-size: 10px; color: var(--text-muted); }
-        .preset-thumb:hover, .preset-thumb.selected { border-color: var(--cyan); color: #fff; background: rgba(0,240,255,0.15); }
-
-        .form-group { margin-bottom: 8px; }
-        .form-group label { display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 3px; }
-        .file-upload-btn { display: block; width: 100%; padding: 7px; background: rgba(0,240,255,0.1); border: 1px dashed var(--cyan); border-radius: 6px; text-align: center; color: #fff; cursor: pointer; font-size: 11px; transition: 0.2s; }
-        .file-upload-btn:hover { background: rgba(0,240,255,0.2); }
-        input[type="file"] { display: none; }
-        input[type="text"], select { width: 100%; padding: 7px; background: rgba(0,0,0,0.5); border: 1px solid #3b1770; border-radius: 6px; color: #fff; font-size: 11px; outline: none; }
-        input[type="color"] { width: 100%; height: 30px; border: none; border-radius: 6px; cursor: pointer; background: transparent; }
-        input[type="range"] { width: 100%; accent-color: var(--cyan); cursor: pointer; }
-
-        .btn-export { width: 100%; background: linear-gradient(135deg, var(--cyan), var(--purple)); color: #fff; border: none; padding: 11px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px rgba(0,240,255,0.3); transition: 0.2s; text-transform: uppercase; margin-top: 4px; }
-        .btn-export:hover { filter: brightness(1.1); }
-        .btn-export.recording { background: linear-gradient(135deg, #ff0055, #ff8800); animation: pulse 1.5s infinite; }
-
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-
-        .status-bar { text-align: center; font-size: 10px; color: var(--text-muted); padding: 8px; background: #08030f; border-top: 1px solid #200d3d; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VivaEdit</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0f0a1e;display:flex;justify-content:center}
+.phone{width:390px;min-height:100vh;background:#150b2e;color:#fff;position:relative;overflow:hidden}
+.screen{display:none;padding:16px;padding-bottom:80px}
+.screen.active{display:block}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.logo{font-size:28px;font-weight:900;background:linear-gradient(90deg,#ff2ea6,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.btn{background:linear-gradient(90deg,#a855f7,#ec4899);border:none;color:#fff;padding:14px;border-radius:999px;width:100%;font-weight:700;font-size:16px;margin-top:12px;cursor:pointer}
+.btn-outline{background:transparent;border:1px solid #fff}
+.card{background:#2a1a4a;border-radius:16px;padding:12px;margin-top:12px;cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.thumb{height:130px;border-radius:14px;display:flex;align-items:flex-end;padding:10px;font-weight:700;background-size:cover;background-position:center}
+.video-preview{height:280px;border-radius:18px;background:url('https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600') center/cover;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.video-preview::after{content:'▶';font-size:50px;background:rgba(0,0,0,.5);width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.timeline{display:flex;gap:6px;margin-top:12px}
+.clip{flex:1;height:55px;border-radius:10px;background:#6d28d9;border:2px solid #ec4899;display:flex;align-items:center;justify-content:center;font-size:12px}
+.tool{display:flex;gap:8px;overflow:auto;margin-top:12px}
+.tool button{white-space:nowrap;background:#2a1a4a;color:#fff;border:none;padding:10px 14px;border-radius:999px}
+.slider{width:100%;margin:10px 0}
+.bottom{position:fixed;bottom:0;width:390px;background:#1a1030;display:flex;justify-content:space-around;padding:12px 0;border-top:1px solid #333}
+.bottom button{background:none;border:none;color:#aaa;font-size:12px}
+.bottom button.active{color:#ec4899}
+input{width:100%;padding:13px;border-radius:12px;border:none;margin-top:10px}
+.badge{background:#ec4899;padding:4px 10px;border-radius:999px;font-size:12px}
+.progress{width:140px;height:140px;border-radius:50%;border:10px solid #333;border-top-color:#ec4899;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;margin:30px auto;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
 </head>
 <body>
+<div class="phone">
 
-    <header>
-        <div class="logo-area">
-            <div class="logo-icon">💠</div>
-            <div class="logo-text">
-                <h1>MINH OFFICIAL</h1>
-                <small>Cyber-Void Fixed Studio</small>
-            </div>
-        </div>
-        <div class="header-badge">
-            💠 Fixed Audio • 🟢 Ready
-        </div>
-    </header>
+<!-- 1 LOGIN -->
+<div id="s1" class="screen active">
+  <div style="text-align:center;padding:40px 0 20px"><div style="font-size:60px">✦</div><div class="logo">VivaEdit</div><p style="color:#ccc">Sáng tạo không giới hạn</p></div>
+  <div class="video-preview"></div>
+  <button class="btn" onclick="show('s2')">Đăng nhập</button>
+  <button class="btn btn-outline" onclick="show('s2')">Đăng ký</button>
+  <p style="text-align:center;margin-top:12px;color:#aaa;font-size:13px">Hoặc đăng nhập bằng</p>
+  <div style="display:flex;justify-content:center;gap:16px;margin-top:10px"><span style="font-size:28px">G</span><span style="font-size:28px">f</span><span style="font-size:28px">♪</span></div>
+  <button class="btn btn-outline" onclick="show('s2')" style="margin-top:20px">Bỏ qua →</button>
+</div>
 
-    <div class="workspace">
-        <div class="panel sidebar">
-            <h3>🧭 Điều hướng</h3>
-            <a href="#" class="nav-item active">🏠 Bảng Điều Khiển</a>
-            <a href="#" class="nav-item">💠 Kho Mẫu Độc Quyền</a>
-            <a href="#" class="nav-item">🖼️ Quản Lý Đa Phương Tiện</a>
-            <a href="#" class="nav-item">⚙️ Thông Số Nâng Cao</a>
-            <a href="#" class="nav-item">📥 Xuất Tệp Bản Quyền</a>
-        </div>
+<!-- 2 HOME -->
+<div id="s2" class="screen">
+  <div class="top"><b>VivaEdit 👑</b><span>⚙️</span></div>
+  <div class="card" style="background:linear-gradient(90deg,#7c3aed,#db2777)" onclick="show('s5')"><b>Tạo dự án mới +</b><br><small>Bắt đầu sáng tạo ngay →</small></div>
+  <div class="grid" style="margin-top:12px">
+    <div class="card" onclick="show('s3')">🎬<br>Mẫu video</div>
+    <div class="card" onclick="show('s9')">✨<br>Hiệu ứng</div>
+    <div class="card" onclick="show('s18')">🤖<br>AI</div>
+    <div class="card" onclick="show('s25')">📁<br>Dự án</div>
+  </div>
+  <h3 style="margin-top:16px">Dự án gần đây <span style="float:right;font-size:13px;color:#a855f7" onclick="show('s25')">Xem tất cả ></span></h3>
+  <div class="card" onclick="show('s6')">📹 Dự án 1 - Ngọt ngào như mơ <br><small>00:00:32 • Hôm nay</small></div>
+  <div class="card" onclick="show('s6')">📹 Dự án 2 - Remix cực cháy <br><small>00:00:15 • Hôm qua</small></div>
+</div>
 
-        <div class="preview-container">
-            <div class="panel" style="flex:1; display:flex; flex-direction:column; gap:10px;">
-                <h3>🎬 Màn Hình Giám Sát (Tỷ lệ 16:9)</h3>
-                <div class="canvas-box">
-                    <canvas id="visual" width="1280" height="720"></canvas>
-                </div>
-                <div class="player-controls">
-                    <button class="btn-control" id="playBtn">▶ Phát Nhạc</button>
-                    <button class="btn-control" id="stopBtn" style="background: linear-gradient(135deg, #333, #111);">⏹ Dừng</button>
-                    <span class="time-display" id="timeInfo">00:00 / 00:00</span>
-                </div>
-                <div id="statusMsg" style="font-size: 11px; color: var(--cyan);">✨ Đã sửa lỗi âm thanh và tối ưu giao diện di động. Hãy tải nhạc lên và bấm Phát!</div>
-            </div>
-        </div>
+<!-- 3 TEMPLATES -->
+<div id="s3" class="screen">
+  <div class="top"><b>← Thư viện mẫu video</b><span onclick="show('s2')">✕</span></div>
+  <input placeholder="🔍 Tìm kiếm mẫu...">
+  <div class="tool"><button>Tất cả</button><button>Tình yêu</button><button>Remix</button><button>Du lịch</button></div>
+  <div class="grid">
+    <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400')" onclick="show('s4')">Ngọt ngào 💖 12.5K</div>
+    <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400')" onclick="show('s4')">Remix cực cháy 🔥 28.7K</div>
+    <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400')" onclick="show('s4')">Phong cảnh 🏔️ 15.3K</div>
+    <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400')" onclick="show('s4')">Anime ✨ 21.1K</div>
+  </div>
+</div>
 
-        <div class="panel" style="display: flex; flex-direction: column; gap: 6px;">
-            <h3>💠 Kho Mẫu Sóng Nhạc</h3>
-            
-            <div class="preset-grid">
-                <div class="preset-thumb selected" onclick="setPreset('cyberGrid', this)">🌐 Cyber Grid</div>
-                <div class="preset-thumb" onclick="setPreset('neonHexagon', this)">⬡ Neon Hexagon</div>
-                <div class="preset-thumb" onclick="setPreset('plasmaOrb', this)">🔮 Plasma Orb</div>
-                <div class="preset-thumb" onclick="setPreset('silkRibbon', this)">〰️ Silk Ribbon</div>
-                <div class="preset-thumb" onclick="setPreset('cdPlayer', this)">💿 CD Rotating</div>
-                <div class="preset-thumb" onclick="setPreset('sinusLine', this)">📈 Sinus Line</div>
-                <div class="preset-thumb" onclick="setPreset('trapNation', this)">🔊 Trap Nation</div>
-                <div class="preset-thumb" onclick="setPreset('sonicBars', this)">📊 Equalizer</div>
-            </div>
+<!-- 4 DETAIL -->
+<div id="s4" class="screen">
+  <div class="top"><b>← Chi tiết mẫu</b><span onclick="show('s3')">✕</span></div>
+  <div class="video-preview"></div>
+  <p style="margin-top:12px"><b>Ngọt ngào như mơ ♡</b> <span style="float:right">💖 45.2K</span></p>
+  <div style="margin-top:10px"><span class="badge">Tình yêu</span> <span class="badge">Lãng mạn</span> <span class="badge">TikTok</span></div>
+  <p style="margin-top:10px;color:#ccc">Cần: 3 ảnh + 1 video</p>
+  <div style="display:flex;gap:10px"><button class="btn btn-outline" onclick="alert('Đã mở thư viện để Thay ảnh')">Thay ảnh</button><button class="btn btn-outline" onclick="alert('Đã mở thư viện nhạc')">Thay nhạc</button></div>
+  <button class="btn" onclick="show('s5')">Dùng mẫu</button>
+</div>
 
-            <div class="form-group">
-                <label>Tải file âm thanh (.mp3 / .wav)</label>
-                <label class="file-upload-btn" for="audioFile">🎵 Chọn file nhạc</label>
-                <input type="file" id="audioFile" accept="audio/*">
-            </div>
+<!-- 5 PICK -->
+<div id="s5" class="screen">
+  <div class="top"><b>← Chọn video từ thư viện</b><span>Video | Hình ảnh | Album</span></div>
+  <div class="grid" id="pickGrid"></div>
+  <div style="position:fixed;bottom:60px;width:358px;background:#1a1030;padding:12px;border-radius:14px;display:flex;justify-content:space-between;align-items:center"><span id="pickCount">Đã chọn: 0</span><button style="background:#ec4899;color:#fff;border:none;padding:10px 16px;border-radius:999px" onclick="show('s6')">Thêm →</button></div>
+</div>
 
-            <div class="form-group">
-                <label>Chọn hình nền / avatar</label>
-                <label class="file-upload-btn" for="imageFile">🖼️ Tải ảnh nền</label>
-                <input type="file" id="imageFile" accept="image/*">
-            </div>
+<!-- 6 EDITOR -->
+<div id="s6" class="screen">
+  <div class="top"><b>✕ Màn hình chỉnh sửa chính</b><button style="background:#ec4899;color:#fff;border:none;padding:8px 14px;border-radius:999px" onclick="show('s21')">Xuất ↗</button></div>
+  <div class="video-preview" id="mainPreview"></div>
+  <p style="margin-top:8px;font-size:13px">00:00 / 00:15 • <span id="filterName">Chưa có bộ lọc</span> • <span id="textOnVideo">I Love You ♡</span></p>
+  <div class="timeline"><div class="clip" onclick="show('s7')">Clip 1</div><div class="clip" onclick="show('s7')">Clip 2</div><div class="clip" onclick="show('s7')">Clip 3</div></div>
+  <div class="tool"><button onclick="show('s7')">✂️ Cắt</button><button onclick="show('s13')">🎵 Âm thanh</button><button onclick="show('s11')">T Văn bản</button><button onclick="show('s9')">✨ Hiệu ứng</button><button onclick="show('s14')">🧩 Lớp phủ</button><button onclick="show('s15')">🎨 Bộ lọc</button><button onclick="show('s16')">🔀 Chuyển cảnh</button><button onclick="show('s17')">🌈 Màu sắc</button><button onclick="show('s18')">🤖 AI</button></div>
+  <div class="card" onclick="show('s11')">✏️ Chữ: <b id="textPreview">I Love You ♡</b> - Bấm để sửa</div>
+</div>
 
-            <div class="form-group">
-                <label>Âm lượng tổng</label>
-                <input type="range" id="volumeRange" min="0" max="2" step="0.1" value="1">
-            </div>
+<!-- 7-8 CUT -->
+<div id="s7" class="screen">
+  <div class="top"><b>← Chọn đoạn video</b><span onclick="show('s6')">✕</span></div>
+  <div class="video-preview"></div>
+  <div class="tool"><button onclick="show('s8')">Cắt</button><button onclick="alert('Đã tách clip thành 2!')">Tách</button><button>Tốc độ</button><button>Âm lượng</button><button onclick="alert('Đã xóa clip')">Xóa</button></div>
+  <button class="btn" onclick="show('s8')">Mở Cắt video →</button>
+</div>
+<div id="s8" class="screen">
+  <div class="top"><b>← Cắt video (kéo thanh)</b><span onclick="show('s6')">✕</span></div>
+  <div class="video-preview"></div>
+  <p>Kéo để cắt: <span id="cutVal">00:00 - 00:15</span></p>
+  <input type="range" class="slider" min="0" max="15" value="15" oninput="document.getElementById('cutVal').innerText='00:00 - 00:'+this.value.padStart(2,'0')">
+  <button class="btn" onclick="show('s6')">Xong - Về màn sửa</button>
+</div>
 
-            <div class="form-group">
-                <label>Hiệu ứng âm thanh</label>
-                <div style="display: flex; gap: 4px;">
-                    <button class="btn-control" id="fadeInBtn" style="flex:1; font-size:9px; padding:5px;">📈 Fade In</button>
-                    <button class="btn-control" id="fadeOutBtn" style="flex:1; font-size:9px; padding:5px; background:linear-gradient(135deg, #ff8800, #ff0055);">📉 Fade Out</button>
-                </div>
-            </div>
+<!-- 9-10 EFFECT -->
+<div id="s9" class="screen">
+  <div class="top"><b>← Thêm hiệu ứng</b><span onclick="show('s6')">✕</span></div>
+  <div class="tool"><button>Hot</button><button>Trending</button><button>Vui nhộn</button></div>
+  <div class="grid"><div class="card" onclick="show('s10')">🔍 Zoom 3D</div><div class="card" onclick="show('s10')">✨ Lấp lánh</div><div class="card" onclick="show('s10')">💖 Trái tim</div><div class="card" onclick="show('s10')">🌟 Tuyệt vời</div></div>
+</div>
+<div id="s10" class="screen">
+  <div class="top"><b>← Tùy chỉnh hiệu ứng</b><span onclick="show('s6')">✕</span></div>
+  <div class="video-preview"></div>
+  <p>Cường độ: <span id="intVal">70%</span></p><input type="range" class="slider" value="70" oninput="document.getElementById('intVal').innerText=this.value+'%'">
+  <p>Thời gian: 2.5s</p>
+  <button class="btn" onclick="alert('Đã áp dụng hiệu ứng!');show('s6')">Áp dụng</button>
+</div>
 
-            <div class="form-group">
-                <label>Tiêu đề bài hát</label>
-                <input type="text" id="songTitle" value="MINH OFFICIAL" style="margin-bottom: 3px;">
-                <input type="text" id="songArtist" value="Studio Edition 💠">
-            </div>
+<!-- 11-12 TEXT -->
+<div id="s11" class="screen">
+  <div class="top"><b>← Thêm văn bản</b><span onclick="show('s6')">✕</span></div>
+  <input id="txtInput" value="I Love You ♡" placeholder="Nhập chữ...">
+  <div class="tool"><button>Font</button><button>Màu</button><button>Đậm</button></div>
+  <button class="btn" onclick="document.getElementById('textPreview').innerText=document.getElementById('txtInput').value;document.getElementById('textOnVideo').innerText=document.getElementById('txtInput').value;show('s12')">Tiếp - Chọn chữ động →</button>
+</div>
+<div id="s12" class="screen">
+  <div class="top"><b>← Chữ động</b><span onclick="show('s6')">✕</span></div>
+  <div class="grid"><div class="card" onclick="alert('Fade In')">Fade In</div><div class="card" onclick="alert('Zoom In')">Zoom In</div><div class="card" onclick="alert('Bay lên')">Bay lên</div><div class="card" onclick="alert('Trượt vào')">Trượt vào</div></div>
+  <button class="btn" onclick="show('s6')">Áp dụng</button>
+</div>
 
-            <div class="form-group">
-                <label>Màu ánh sáng chủ đạo</label>
-                <input type="color" id="waveColor" value="#00f0ff">
-            </div>
+<!-- 13-17 -->
+<div id="s13" class="screen"><div class="top"><b>← Phụ đề tự động</b><span onclick="show('s6')">✕</span></div><div class="card" style="text-align:center;padding:30px">🎙️<br>Nhận diện giọng nói...<br><small>Tiếng Việt ▼</small></div><button class="btn" onclick="alert('Đã tạo phụ đề: Xin chào, đây là video của mình!');show('s6')">Áp dụng phụ đề</button></div>
+<div id="s14" class="screen"><div class="top"><b>← Thêm lớp phủ</b><span onclick="show('s6')">✕</span></div><div class="grid"><div class="card" onclick="alert('Đã thêm sticker Trái tim')">💖 Trái tim</div><div class="card" onclick="alert('Đã thêm Vương miện')">👑 Vương miện</div><div class="card" onclick="alert('Đã thêm Bướm')">🦋 Bướm</div><div class="card" onclick="alert('Đã thêm Sticker')">⭐ Sao</div></div><button class="btn" onclick="show('s6')">Thêm vào timeline</button></div>
+<div id="s15" class="screen"><div class="top"><b>← Bộ lọc màu</b><span onclick="show('s6')">✕</span></div><div class="grid"><div class="card" onclick="setFilter('Điện ảnh')">🎬 Điện ảnh</div><div class="card" onclick="setFilter('Retro')">📷 Retro</div><div class="card" onclick="setFilter('Mờ ảo')">🌫️ Mờ ảo</div><div class="card" onclick="setFilter('Rực rỡ')">🌈 Rực rỡ</div></div></div>
+<div id="s16" class="screen"><div class="top"><b>← Chuyển cảnh</b><span onclick="show('s6')">✕</span></div><div class="tool"><button>Cơ bản</button><button>Chuyển động</button></div><div class="grid"><div class="card" onclick="alert('Mờ dần - 0.5s')">Mờ dần</div><div class="card" onclick="alert('Trượt trái - 0.5s')">Trượt trái</div><div class="card" onclick="alert('Xoay - 0.5s')">Xoay</div></div><button class="btn" onclick="show('s6')">Áp dụng</button></div>
+<div id="s17" class="screen"><div class="top"><b>← Điều chỉnh màu sắc</b><span onclick="show('s6')">✕</span></div><p>Độ sáng</p><input type="range" class="slider"><p>Tương phản</p><input type="range" class="slider"><p>Bão hòa</p><input type="range" class="slider"><button class="btn" onclick="show('s6')">Xong</button></div>
 
-            <button class="btn-export" id="exportBtn">🚀 Xuất Video Full HD</button>
-        </div>
-    </div>
+<!-- 18-20 AI -->
+<div id="s18" class="screen"><div class="top"><b>← Trung tâm AI</b><span onclick="show('s6')">✕</span></div><div class="grid"><div class="card" onclick="show('s19')">🎨 Tạo ảnh</div><div class="card" onclick="show('s20')">🖼️ Ảnh thành video</div><div class="card" onclick="alert('Văn bản thành video')">📝 Văn bản → Video</div><div class="card" onclick="alert('Đã xóa nền!')">✂️ Xóa nền</div><div class="card" onclick="alert('Đã thay nền!')">🖼️ Thay nền</div><div class="card" onclick="alert('Đã mở rộng ảnh!')">↔️ Mở rộng ảnh</div></div></div>
+<div id="s19" class="screen"><div class="top"><b>← AI tạo ảnh từ mô tả</b><span onclick="show('s18')">✕</span></div><input placeholder="VD: Cô gái anime dễ thương bên hoa anh đào..."><div class="tool"><button>Anime</button><button>Realistic</button></div><button class="btn" onclick="alert('AI đang tạo ảnh... Xong! Đã tạo ảnh anime cho bạn.');show('s6')">Tạo ảnh</button></div>
+<div id="s20" class="screen"><div class="top"><b>← AI ảnh thành video</b><span onclick="show('s18')">✕</span></div><div class="video-preview"></div><p>Chuyển động: Nhẹ nhàng</p><div class="tool"><button>3s</button><button>5s</button><button>10s</button></div><button class="btn" onclick="alert('Đang tạo video từ ảnh... Xong!');show('s6')">Tạo video</button></div>
 
-    <div class="status-bar">
-        MINH OFFICIAL • Cyber-Void Fixed Studio. Audio & UI Ready.
-    </div>
+<!-- 21-24 EXPORT -->
+<div id="s21" class="screen"><div class="top"><b>← Xuất video</b><span onclick="show('s6')">✕</span></div><p>Độ phân giải</p><div class="tool"><button>1080P</button><button>2K</button><button>4K</button></div><p>Tốc độ khung hình</p><div class="tool"><button>30fps</button><button>60fps</button></div><p>Chất lượng: Cao ▼</p><button class="btn" onclick="show('s22');setTimeout(()=>show('s23'),2500)">Xuất video</button></div>
+<div id="s22" class="screen"><h3 style="text-align:center;margin-top:40px">Đang xuất video...</h3><div class="progress">78%</div><p style="text-align:center;color:#aaa">Vui lòng không rời ứng dụng</p></div>
+<div id="s23" class="screen"><div style="text-align:center;padding:40px"><div style="font-size:60px">✅</div><h2>Đã xuất video thành công!</h2><button class="btn" onclick="alert('Đang phát video của bạn...')">Xem video</button><button class="btn btn-outline" onclick="show('s24')">Chia sẻ</button></div></div>
+<div id="s24" class="screen"><div class="top"><b>← Chia sẻ lên mạng xã hội</b><span onclick="show('s2')">✕</span></div><div class="grid"><div class="card" style="text-align:center" onclick="alert('Mở TikTok...')">♪<br>TikTok</div><div class="card" style="text-align:center" onclick="alert('Mở YouTube...')">▶️<br>YouTube</div><div class="card" style="text-align:center" onclick="alert('Mở Facebook...')">f<br>Facebook</div><div class="card" style="text-align:center" onclick="alert('Đã sao chép liên kết!')">🔗<br>Sao chép link</div></div><button class="btn" onclick="show('s2')">Về Trang chủ</button></div>
 
-    <script>
-        const audioFile = document.getElementById('audioFile');
-        const imageFile = document.getElementById('imageFile');
-        const playBtn = document.getElementById('playBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const volumeRange = document.getElementById('volumeRange');
-        const fadeInBtn = document.getElementById('fadeInBtn');
-        const fadeOutBtn = document.getElementById('fadeOutBtn');
-        const canvas = document.getElementById('visual');
-        const ctx = canvas.getContext('2d');
-        
-        let audioCtx, analyser, audioSource, audioElem, gainNode, destStreamNode;
-        let bgImage = new Image();
-        let isPlaying = false;
-        let audioLoaded = false;
-        let mediaRecorder;
-        let recordedChunks = [];
-        let currentPreset = 'cyberGrid';
-        let rotAngle = 0;
-        let cdAngle = 0;
-        let startTime = 0;
+<!-- 25 SETTINGS -->
+<div id="s25" class="screen"><div class="top"><b>← Quản lý dự án</b><span onclick="show('s2')">✕</span></div><div class="card" onclick="show('s6')">Dự án 1 - 00:00:32 • 2.5 MB</div><div class="card" onclick="show('s6')">Dự án 2 - 00:00:15 • 1.8 MB</div><div class="card" onclick="show('s6')">Dự án 3 - 00:00:45 • 3.1 MB</div><div class="card" onclick="alert('Cài đặt: Chất lượng 1080P, Ngôn ngữ Tiếng Việt, Chế độ tối: Bật')">⚙️ Cài đặt ứng dụng</div><div class="card" onclick="alert('Thống kê: Hôm nay bạn đã dùng 1h 25m')">📊 Thống kê sử dụng</div><div class="card" onclick="alert('Có 2 thông báo mới: Phiên bản 1.2.0 có sẵn!')">🔔 Thông báo & Cập nhật</div></div>
 
-        const voidParticles = [];
-        for (let i = 0; i < 60; i++) {
-            voidParticles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 2 + 0.5,
-                speed: Math.random() * 1.2 + 0.4
-            });
-        }
-
-        function setPreset(presetName, el) {
-            currentPreset = presetName;
-            document.querySelectorAll('.preset-thumb').forEach(e => e.classList.remove('selected'));
-            el.classList.add('selected');
-            document.getElementById('statusMsg').innerText = "✨ Đã chọn mẫu: " + el.innerText;
-        }
-
-        audioFile.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const url = URL.createObjectURL(file);
-            if (audioElem) { audioElem.pause(); }
-            
-            audioElem = new Audio(url);
-            audioElem.crossOrigin = "anonymous";
-            
-            audioElem.onloadedmetadata = function() {
-                document.getElementById('statusMsg').innerText = "✅ Đã tải file nhạc: " + file.name;
-                audioLoaded = true;
-            };
-
-            setupAudioContext();
-        });
-
-        imageFile.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const url = URL.createObjectURL(file);
-            bgImage.src = url;
-        });
-
-        function setupAudioContext() {
-            try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioCtx.createAnalyser();
-                gainNode = audioCtx.createGain();
-                
-                audioSource = audioCtx.createMediaElementSource(audioElem);
-                audioSource.connect(gainNode);
-                gainNode.connect(analyser);
-                
-                destStreamNode = audioCtx.createMediaStreamDestination();
-                analyser.connect(audioCtx.destination); // Phát ra loa để nghe tiếng
-                analyser.connect(destStreamNode);       // Ghi âm khi xuất video
-                
-                analyser.fftSize = 256;
-            } catch(e) {
-                console.log(e);
-            }
-        }
-
-        volumeRange.addEventListener('input', function() {
-            if (gainNode && audioCtx) {
-                gainNode.gain.setValueAtTime(parseFloat(this.value), audioCtx.currentTime);
-            }
-        });
-
-        fadeInBtn.addEventListener('click', function() {
-            if (!audioLoaded || !gainNode) return;
-            audioCtx.resume();
-            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(parseFloat(volumeRange.value), audioCtx.currentTime + 3.0);
-            document.getElementById('statusMsg').innerText = "📈 Đang chạy Fade In...";
-        });
-
-        fadeOutBtn.addEventListener('click', function() {
-            if (!audioLoaded || !gainNode) return;
-            gainNode.gain.setValueAtTime(gainNode.gain.value, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 3.0);
-            document.getElementById('statusMsg').innerText = "📉 Đang chạy Fade Out...";
-            setTimeout(() => {
-                if (audioElem) audioElem.pause();
-                isPlaying = false;
-            }, 3000);
-        });
-
-        playBtn.addEventListener('click', function() {
-            if (!audioLoaded) {
-                alert('Vui lòng chọn file nhạc trước khi phát!');
-                return;
-            }
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            audioElem.play();
-            isPlaying = true;
-            startTime = Date.now();
-            drawVisualizer();
-        });
-
-        stopBtn.addEventListener('click', function() {
-            if (audioElem) {
-                audioElem.pause();
-                audioElem.currentTime = 0;
-            }
-            isPlaying = false;
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-            }
-        });
-
-        function drawVisualizer() {
-            if (!isPlaying) return;
-            requestAnimationFrame(drawVisualizer);
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            if (bgImage.complete && bgImage.src) {
-                let hRatio = canvas.width / bgImage.width;
-                let vRatio = canvas.height / bgImage.height;
-                let ratio = Math.max(hRatio, vRatio);
-                let centerShiftX = (canvas.width - bgImage.width * ratio) / 2;
-                let centerShiftY = (canvas.height - bgImage.height * ratio) / 2;
-                ctx.drawImage(bgImage, 0, 0, bgImage.width, bgImage.height, centerShiftX, centerShiftY, bgImage.width * ratio, bgImage.height * ratio);
-                ctx.fillStyle = 'rgba(6, 2, 12, 0.55)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            } else {
-                ctx.fillStyle = '#06020c';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-            analyser.getByteFrequencyData(dataArray);
-
-            let bassSum = 0;
-            for (let i = 0; i < 15; i++) { bassSum += dataArray[i]; }
-            let bassLevel = bassSum / 15;
-
-            const userColor = document.getElementById('waveColor').value;
-
-            let elapsedSec = (Date.now() - startTime) / 1000;
-            let introProgress = Math.min(elapsedSec / 2.5, 1.0);
-
-            if (introProgress < 1.0) {
-                ctx.save();
-                ctx.translate(canvas.width / 2, canvas.height / 2 - 20);
-                let introScale = introProgress * introProgress;
-                ctx.scale(introScale, introScale);
-                ctx.globalAlpha = introProgress;
-
-                let gradIntro = ctx.createRadialGradient(0, 0, 10, 0, 0, 180);
-                gradIntro.addColorStop(0, userColor);
-                gradIntro.addColorStop(1, 'transparent');
-                ctx.fillStyle = gradIntro;
-                ctx.beginPath();
-                ctx.arc(0, 0, 180, 0, Math.PI * 2);
-                ctx.fill();
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 32px Segoe UI';
-                ctx.textAlign = 'center';
-                ctx.shadowColor = userColor;
-                ctx.shadowBlur = 15;
-                ctx.fillText("MINH OFFICIAL", 0, 0);
-                ctx.restore();
-            } else {
-                voidParticles.forEach(p => {
-                    p.y += p.speed * (1 + bassLevel / 35);
-                    if (p.y > canvas.height) { p.y = 0; p.x = Math.random() * canvas.width; }
-                    ctx.fillStyle = userColor;
-                    ctx.globalAlpha = 0.5 + (bassLevel / 255);
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size * (1 + bassLevel / 60), 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.globalAlpha = 1.0;
-                });
-
-                if (currentPreset === 'cyberGrid') {
-                    ctx.save();
-                    ctx.strokeStyle = userColor;
-                    ctx.lineWidth = 2 + (bassLevel / 40);
-                    ctx.shadowColor = userColor;
-                    ctx.shadowBlur = 10 + bassLevel * 0.3;
-                    let radius = 90 + (bassLevel * 0.7);
-                    ctx.translate(canvas.width / 2, canvas.height / 2 - 20);
-                    rotAngle += 0.015;
-                    ctx.rotate(rotAngle);
-                    for (let i = 0; i < 6; i++) {
-                        ctx.rotate(Math.PI / 3);
-                        ctx.beginPath();
-                        ctx.moveTo(0, 0);
-                        ctx.lineTo(radius, radius);
-                        ctx.stroke();
-                    }
-                    ctx.restore();
+</div>
+<div class="bottom"><button class="active" onclick="show('s2')">🏠<br>Trang chủ</button><button onclick="show('s3')">🎬<br>Mẫu</button><button onclick="show('s6')" style="font-size:20px">＋</button><button onclick="show('s18')">🤖<br>AI</button><button onclick="show('s25')">👤<br>Của tôi</button></div>
+<script>
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+let picks=new Set();
+let imgs=['https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300','https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=300','https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300','https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300','https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300','https://images.unsplash.com/photo-1512316609839-e62e4b6a73e9?w=300'];
+let g=document.getElementById('pickGrid');
+imgs.forEach((src,i)=>{let d=document.createElement('div');d.className='thumb';d.style.backgroundImage=`url(${src})`;d.innerText='00:15';d.onclick=()=>{if(picks.has(i)){picks.delete(i);d.style.border='none'}else{picks.add(i);d.style.border='3px solid #ec4899'}document.getElementById('pickCount').innerText='Đã chọn: '+picks.size};g.appendChild(d)});
+function setFilter(n){document.getElementById('filterName').innerText='Bộ lọc: '+n;alert('Đã áp dụng bộ lọc '+n);show('s6')}
+</script>
+</body>
+</html>
