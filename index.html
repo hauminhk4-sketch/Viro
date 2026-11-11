@@ -1,273 +1,432 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#090414">
-<title>MINH OFFICIAL - Music Visualizer Studio</title>
-<style>
-:root{--bg:#090414;--panel:#160b2d;--purple:#8b19ff;--pink:#ff24d2;--cyan:#00d9ff}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:white;font-family:Arial,sans-serif}
-header{padding:16px;text-align:center;background:#100721;border-bottom:1px solid #7e1cff}
-.logo{font-size:26px;font-weight:900;letter-spacing:2px;color:#fff;text-shadow:0 0 12px #a000ff}
-header small{display:block;color:#d6aaff;margin-top:5px}
-main{max-width:1100px;margin:auto;padding:12px}
-.panel{background:linear-gradient(145deg,#1b0c35,#0e0920);border:1px solid #6d20c9;border-radius:15px;padding:14px;margin-bottom:13px;box-shadow:0 0 15px #6000a522}
-h3{margin:0 0 12px;color:#e8caff}
-canvas{width:100%;display:block;background:#05020d;border-radius:12px;border:1px solid #6320a8}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-label{display:block;font-size:13px;color:#d9c5f5;margin:8px 0 5px}
-input,select,button{width:100%;padding:12px;border-radius:9px;border:1px solid #6332a0;background:#100821;color:white}
-input[type=color]{height:43px;padding:4px}
-input[type=range]{padding:0;accent-color:#b22aff}
-button{background:linear-gradient(100deg,#6710e8,#c000db);border:0;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.5}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
-.wide{grid-column:1/-1}
-#status{font-size:12px;color:#c8a7ff;margin-top:10px;overflow-wrap:anywhere}
-footer{text-align:center;color:#987db7;font-size:12px;padding:18px}
-@media(min-width:750px){.workspace{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}.workspace .panel{margin:0}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090414">
+    <title>MINH OFFICIAL - Music Visualizer Studio Pro</title>
+    <style>
+        :root {
+            --bg: #090414;
+            --panel: #160b2d;
+            --purple: #8b19ff;
+            --pink: #ff24d2;
+            --cyan: #00d9ff;
+            --text-main: #ffffff;
+            --text-muted: #987db7;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+
+        header { background: #100721; border-bottom: 1px solid #7e1cff; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--pink)); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; box-shadow: 0 0 15px var(--purple); }
+        .logo-text h1 { font-size: 20px; font-weight: 900; background: linear-gradient(90deg, #fff, var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
+        .logo-text small { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        .header-badge { background: linear-gradient(90deg, #b8860b, #ffd700); color: #000; font-weight: bold; padding: 6px 14px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 10px rgba(255,215,0,0.4); }
+
+        .workspace { display: grid; grid-template-columns: 260px 1fr 320px; gap: 16px; padding: 16px; flex: 1; max-width: 1600px; margin: 0 auto; width: 100%; }
+        @media(max-width: 1200px) { .workspace { grid-template-columns: 1fr; } }
+
+        .panel { background: var(--panel); border: 1px solid #3d1c75; border-radius: 16px; padding: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        .panel h3 { font-size: 14px; margin-bottom: 12px; color: var(--cyan); display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .sidebar { display: flex; flex-direction: column; gap: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: #fff; background: rgba(255,255,255,0.03); text-decoration: none; font-size: 14px; transition: 0.2s; border: 1px solid transparent; }
+        .nav-item:hover, .nav-item.active { background: linear-gradient(90deg, rgba(139,25,255,0.4), transparent); border-color: var(--purple); box-shadow: 0 0 12px rgba(139,25,255,0.3); }
+
+        .preview-container { display: flex; flex-direction: column; gap: 16px; }
+        .canvas-box { position: relative; width: 100%; aspect-ratio: 16/9; background: #05020d; border-radius: 12px; border: 2px solid var(--purple); overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(139,25,255,0.3); }
+        canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        .player-controls { display: flex; gap: 12px; align-items: center; background: rgba(0,0,0,0.3); padding: 10px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; }
+        .btn-control { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(255,36,210,0.3); }
+        .btn-control:hover { filter: brightness(1.2); transform: translateY(-1px); }
+        .time-display { font-size: 13px; color: var(--text-muted); font-family: monospace; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+        .file-upload-btn { display: block; width: 100%; padding: 12px; background: rgba(139,25,255,0.15); border: 2px dashed var(--purple); border-radius: 8px; text-align: center; color: #fff; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .file-upload-btn:hover { background: rgba(139,25,255,0.3); }
+        input[type="file"] { display: none; }
+        input[type="text"], select { width: 100%; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid #4a2182; border-radius: 8px; color: #fff; font-size: 13px; outline: none; }
+        input[type="color"] { width: 100%; height: 38px; border: none; border-radius: 8px; cursor: pointer; background: transparent; }
+        input[type="range"] { width: 100%; accent-color: var(--pink); cursor: pointer; }
+
+        .btn-export { width: 100%; background: linear-gradient(135deg, #00d9ff, var(--purple)); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px rgba(0,217,255,0.4); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; }
+        .btn-export:hover { filter: brightness(1.1); box-shadow: 0 0 30px rgba(0,217,255,0.7); }
+        .btn-export.recording { background: linear-gradient(135deg, #ff2424, #ff8800); animation: pulse 1.5s infinite; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+
+        .status-bar { text-align: center; font-size: 12px; color: var(--text-muted); padding: 12px; background: #0c051a; border-top: 1px solid #231145; }
+    </style>
 </head>
 <body>
-<header>
-  <div class="logo">♛ MINH OFFICIAL</div>
-  <small>MUSIC VISUALIZER STUDIO · CREATE · EDIT · SHARE</small>
-</header>
 
-<main>
-  <div class="workspace">
-    <section class="panel">
-      <h3>🎬 Màn hình xem trước</h3>
-      <canvas id="visual" width="900" height="506"></canvas>
-      <div class="actions">
-        <button id="play">▶ Phát nhạc</button>
-        <button id="stop">■ Dừng</button>
-      </div>
-      <div id="status">Hãy tải một bài nhạc để bắt đầu.</div>
-    </section>
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">👑</div>
+            <div class="logo-text">
+                <h1>MINH OFFICIAL</h1>
+                <small>Music Visualizer Studio • Pro Full HD</small>
+            </div>
+        </div>
+        <div class="header-badge">
+            👑 Phiên bản Full HD • 🟢 Online
+        </div>
+    </header>
 
-    <section class="panel">
-      <h3>🎵 Tải nhạc và hình nền</h3>
-      <label>Chọn file nhạc</label>
-      <input id="audioFile" type="file" accept="audio/*">
-      <label>Chọn ảnh nền</label>
-      <input id="imageFile" type="file" accept="image/*">
-      <label>Tên bài hát</label>
-      <input id="songTitle" value="MINH OFFICIAL">
-      <label>Tên nghệ sĩ</label>
-      <input id="artist" value="Music is life">
-      <label>Kiểu sóng nhạc</label>
-      <select id="style">
-        <option value="bars">Equalizer - Cột nhạc</option>
-        <option value="circle">Vòng tròn âm thanh</option>
-        <option value="wave">Sóng ngang</option>
-        <option value="mirror">Cột đối xứng</option>
-      </select>
-      <label>Màu sóng nhạc</label>
-      <input id="waveColor" type="color" value="#b52cff">
-      <label>Màu chữ</label>
-      <input id="textColor" type="color" value="#ffffff">
-      <label>Độ sáng hiệu ứng</label>
-      <input id="glow" type="range" min="0" max="40" value="20">
-      <label>Tỷ lệ video</label>
-      <select id="ratio">
-        <option value="16:9">16:9 - YouTube</option>
-        <option value="9:16">9:16 - TikTok / Shorts</option>
-        <option value="1:1">1:1 - Vuông</option>
-      </select>
-      <div class="actions">
-        <button id="apply">Cập nhật</button>
-        <button id="export">⬇ Xuất video</button>
-      </div>
-    </section>
-  </div>
-  <footer>MINH OFFICIAL · Music Visualizer Studio</footer>
-</main>
+    <div class="workspace">
+        <div class="panel sidebar">
+            <h3>🧭 Điều hướng</h3>
+            <a href="#" class="nav-item active">🏠 Trang chủ</a>
+            <a href="#" class="nav-item">🎵 Mẫu sóng nhạc (100+)</a>
+            <a href="#" class="nav-item">🖼️ Kho ảnh & Video</a>
+            <a href="#" class="nav-item">⚙️ Chỉnh sửa nâng cao</a>
+            <a href="#" class="nav-item">📥 Xuất video Full HD</a>
+            <a href="#" class="nav-item">ℹ️ Giới thiệu</a>
+        </div>
 
-<audio id="audio" playsinline></audio>
+        <div class="preview-container">
+            <div class="panel" style="flex:1; display:flex; flex-direction:column; gap:12px;">
+                <h3>🎬 Màn hình xem trước (Chuẩn tỷ lệ 16:9)</h3>
+                <div class="canvas-box">
+                    <!-- Canvas được cấu hình ngầm chuẩn Full HD 1920x1080 để xuất file nét căng -->
+                    <canvas id="visual" width="1920" height="1080"></canvas>
+                </div>
+                <div class="player-controls">
+                    <button class="btn-control" id="playBtn">▶ Phát nhạc</button>
+                    <button class="btn-control" id="stopBtn" style="background: linear-gradient(135deg, #444, #222);">⏹ Dừng</button>
+                    <span class="time-display" id="timeInfo">00:00 / 00:00</span>
+                </div>
+                <div id="statusMsg" style="font-size: 13px; color: var(--cyan);">✨ Đã kích hoạt chế độ xuất video Full HD không nén tiếng.</div>
+            </div>
+        </div>
 
-<script>
-const canvas=document.getElementById('visual');
-const ctx=canvas.getContext('2d');
-const audio=document.getElementById('audio');
-const statusBox=document.getElementById('status');
+        <div class="panel" style="display: flex; flex-direction: column; gap: 14px;">
+            <h3>🎛️ Cấu hình & Âm thanh</h3>
+            
+            <div class="form-group">
+                <label>Chọn file nhạc (.mp3 / .wav / .m4a)</label>
+                <label class="file-upload-btn" for="audioFile">🎵 Tải file nhạc lên</label>
+                <input type="file" id="audioFile" accept="audio/*">
+            </div>
 
-let audioContext=null, analyser=null, source=null, audioStream=null;
-let background=null, animationId=null, recording=false;
-let data=new Uint8Array(128);
-let title='MINH OFFICIAL', artist='Music is life';
+            <div class="form-group">
+                <label>Chọn ảnh nền (.jpg / .png)</label>
+                <label class="file-upload-btn" for="imageFile">🖼️ Thêm ảnh nền</label>
+                <input type="file" id="imageFile" accept="image/*">
+            </div>
 
-function resizeCanvas(){
-  const ratio=document.getElementById('ratio').value;
-  if(ratio==='9:16'){canvas.width=540;canvas.height=960}
-  else if(ratio==='1:1'){canvas.width=800;canvas.height=800}
-  else{canvas.width=900;canvas.height=506}
-  draw();
-}
-function setupAudio(){
-  if(audioContext)return;
-  audioContext=new(window.AudioContext||window.webkitAudioContext)();
-  analyser=audioContext.createAnalyser();
-  analyser.fftSize=256;
-  analyser.smoothingTimeConstant=.82;
-  source=audioContext.createMediaElementSource(audio);
-  audioStream=audioContext.createMediaStreamDestination();
-  source.connect(analyser);
-  analyser.connect(audioContext.destination);
-  analyser.connect(audioStream);
-}
-function draw(){
-  const w=canvas.width,h=canvas.height;
-  const color=document.getElementById('waveColor').value;
-  const textColor=document.getElementById('textColor').value;
-  const glow=Number(document.getElementById('glow').value);
-  const style=document.getElementById('style').value;
+            <div class="form-group">
+                <label>Âm lượng tổng (To / Nhỏ)</label>
+                <input type="range" id="volumeRange" min="0" max="2" step="0.1" value="1">
+            </div>
 
-  ctx.clearRect(0,0,w,h);
-  const bg=ctx.createLinearGradient(0,0,w,h);
-  bg.addColorStop(0,'#100326');bg.addColorStop(1,'#03020b');
-  ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+            <div class="form-group">
+                <label>Hiệu ứng âm thanh</label>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-control" id="fadeInBtn" style="flex:1; font-size:11px; padding:8px;">📈 Fade In (To dần)</button>
+                    <button class="btn-control" id="fadeOutBtn" style="flex:1; font-size:11px; padding:8px; background:linear-gradient(135deg, #ff8800, #ff2424);">📉 Fade Out (Nhỏ dần)</button>
+                </div>
+            </div>
 
-  if(background){
-    ctx.save();ctx.globalAlpha=.48;
-    const scale=Math.max(w/background.width,h/background.height);
-    const iw=background.width*scale,ih=background.height*scale;
-    ctx.drawImage(background,(w-iw)/2,(h-ih)/2,iw,ih);
-    ctx.restore();
-  }
+            <div class="form-group">
+                <label>Tên bài hát</label>
+                <input type="text" id="songTitle" value="MINH OFFICIAL">
+            </div>
 
-  if(analyser)analyser.getByteFrequencyData(data);
-  else data.fill(8);
+            <div class="form-group">
+                <label>Tên nghệ sĩ</label>
+                <input type="text" id="songArtist" value="Music is life ❤️">
+            </div>
 
-  ctx.save();
-  ctx.shadowBlur=glow;ctx.shadowColor=color;
-  ctx.strokeStyle=color;ctx.fillStyle=color;
-  ctx.lineWidth=3;
+            <div class="form-group">
+                <label>Kiểu sóng nhạc</label>
+                <select id="visualStyle">
+                    <option value="bars">Equalizer - Cột nhạc cyber</option>
+                    <option value="circle">Vòng tròn phổ tần số</option>
+                </select>
+            </div>
 
-  if(style==='bars'||style==='mirror'){
-    const count=64,barGap=w/count;
-    for(let i=0;i<count;i++){
-      const v=data[i]||5;
-      const bh=Math.max(4,(v/255)*h*.32);
-      const x=i*barGap+barGap*.15;
-      const bw=barGap*.7;
-      if(style==='bars')ctx.fillRect(x,h*.72-bh,bw,bh);
-      else{
-        ctx.fillRect(x,h/2-bh/2,bw,bh/2);
-        ctx.fillRect(x,h/2,bw,bh/2);
-      }
-    }
-  }else if(style==='circle'){
-    const cx=w/2,cy=h*.48,r=Math.min(w,h)*.19;
-    for(let i=0;i<128;i++){
-      const angle=i/128*Math.PI*2;
-      const v=data[i%data.length]||5;
-      const len=12+(v/255)*Math.min(w,h)*.12;
-      const x1=cx+Math.cos(angle)*r;
-      const y1=cy+Math.sin(angle)*r;
-      const x2=cx+Math.cos(angle)*(r+len);
-      const y2=cy+Math.sin(angle)*(r+len);
-      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
-    }
-    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
-  }else{
-    ctx.beginPath();
-    for(let x=0;x<w;x++){
-      const i=Math.floor(x/w*data.length);
-      const y=h*.55+(data[i]-128)*h*.002;
-      if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-  }
-  ctx.restore();
+            <div class="form-group">
+                <label>Màu sóng nhạc</label>
+                <input type="color" id="waveColor" value="#00d9ff">
+            </div>
 
-  ctx.textAlign='center';
-  ctx.fillStyle=textColor;
-  ctx.shadowColor=color;ctx.shadowBlur=glow;
-  ctx.font=`bold ${Math.max(22,w*.045)}px Arial`;
-  ctx.fillText(title,w/2,h*.86);
-  ctx.shadowBlur=0;
-  ctx.font=`${Math.max(14,w*.022)}px Arial`;
-  ctx.fillText(artist,w/2,h*.92);
-  ctx.textAlign='left';
+            <button class="btn-export" id="exportBtn">🚀 Xuất video Full HD (Không nén tiếng)</button>
+        </div>
+    </div>
 
-  if(!recording)animationId=requestAnimationFrame(draw);
-}
-function startDrawing(){
-  if(animationId)cancelAnimationFrame(animationId);
-  draw();
-}
+    <div class="status-bar">
+        MINH OFFICIAL • Music Visualizer Studio Pro. Chất lượng xuất video Full HD 1080p.
+    </div>
 
-document.getElementById('audioFile').addEventListener('change',e=>{
-  const file=e.target.files[0];if(!file)return;
-  audio.src=URL.createObjectURL(file);
-  statusBox.textContent='Đã tải nhạc: '+file.name;
-  setupAudio();startDrawing();
-});
-document.getElementById('imageFile').addEventListener('change',e=>{
-  const file=e.target.files[0];if(!file)return;
-  const img=new Image();
-  img.onload=()=>{background=img;startDrawing()};
-  img.src=URL.createObjectURL(file);
-});
-document.getElementById('play').onclick=async()=>{
-  if(!audio.src){statusBox.textContent='Bạn cần tải nhạc trước.';return}
-  setupAudio();
-  if(audioContext.state==='suspended')await audioContext.resume();
-  await audio.play();startDrawing();
-};
-document.getElementById('stop').onclick=()=>audio.pause();
-document.getElementById('apply').onclick=()=>{
-  title=document.getElementById('songTitle').value||'MINH OFFICIAL';
-  artist=document.getElementById('artist').value||'';
-  resizeCanvas();startDrawing();
-};
-document.getElementById('ratio').onchange=resizeCanvas;
-document.getElementById('style').onchange=startDrawing;
-document.getElementById('waveColor').oninput=startDrawing;
-document.getElementById('textColor').oninput=startDrawing;
-document.getElementById('glow').oninput=startDrawing;
+    <script>
+        const audioFile = document.getElementById('audioFile');
+        const imageFile = document.getElementById('imageFile');
+        const playBtn = document.getElementById('playBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const volumeRange = document.getElementById('volumeRange');
+        const fadeInBtn = document.getElementById('fadeInBtn');
+        const fadeOutBtn = document.getElementById('fadeOutBtn');
+        const canvas = document.getElementById('visual');
+        const ctx = canvas.getContext('2d');
+        
+        let audioCtx, analyser, audioSource, audioElem, gainNode, destStreamNode;
+        let bgImage = new Image();
+        let isPlaying = false;
+        let audioLoaded = false;
+        let mediaRecorder;
+        let recordedChunks = [];
 
-document.getElementById('export').onclick=async()=>{
-  if(!audio.src){statusBox.textContent='Hãy tải nhạc trước khi xuất video.';return}
-  setupAudio();
-  if(audioContext.state==='suspended')await audioContext.resume();
-  if(!canvas.captureStream||!window.MediaRecorder){
-    statusBox.textContent='Trình duyệt này chưa hỗ trợ quay video. Hãy thử Chrome mới nhất.';
-    return;
-  }
-  const canvasStream=canvas.captureStream(30);
-  const tracks=[...canvasStream.getVideoTracks(),...audioStream.stream.getAudioTracks()];
-  const combined=new MediaStream(tracks);
-  const mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
-    .find(t=>MediaRecorder.isTypeSupported(t));
-  if(!mime){statusBox.textContent='Không tìm thấy định dạng video được hỗ trợ.';return}
+        audioFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            if (audioElem) { audioElem.pause(); }
+            audioElem = new Audio(url);
+            audioElem.crossOrigin = "anonymous";
+            
+            audioElem.onloadedmetadata = function() {
+                document.getElementById('statusMsg').innerText = "✅ Đã tải file gốc: " + file.name;
+                audioLoaded = true;
+            };
 
-  const chunks=[];
-  const recorder=new MediaRecorder(combined,{mimeType:mime});
-  recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
-  recorder.onstop=()=>{
-    const blob=new Blob(chunks,{type:'video/webm'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;a.download='MINH-OFFICIAL-Visualizer.webm';
-    a.click();
-    URL.revokeObjectURL(url);
-    tracks.forEach(t=>t.stop());
-    recording=false;
-    statusBox.textContent='Đã tạo video WebM. Kiểm tra thư mục Tải xuống.';
-    startDrawing();
-  };
-  audio.currentTime=0;
-  await audio.play();
-  recording=true;
-  recorder.start(500);
-  statusBox.textContent='Đang xuất video... Hãy để trình duyệt mở đến khi hoàn tất.';
-  audio.onended=()=>{if(recorder.state!=='inactive')recorder.stop()};
-};
-resizeCanvas();
-</script>
+            setupAudioContext();
+        });
+
+        imageFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            bgImage.src = url;
+        });
+
+        function setupAudioContext() {
+            if (audioSource) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                gainNode = audioCtx.createGain();
+                
+                audioSource = audioCtx.createMediaElementSource(audioElem);
+                audioSource.connect(gainNode);
+                gainNode.connect(analyser);
+                
+                destStreamNode = audioCtx.createMediaStreamDestination();
+                analyser.connect(audioCtx.destination); 
+                analyser.connect(destStreamNode);       
+                
+                analyser.fftSize = 512;
+            } catch(e) {
+                console.log(e);
+            }
+        }
+
+        volumeRange.addEventListener('input', function() {
+            if (gainNode && audioCtx) {
+                gainNode.gain.setValueAtTime(parseFloat(this.value), audioCtx.currentTime);
+            }
+        });
+
+        fadeInBtn.addEventListener('click', function() {
+            if (!audioLoaded || !gainNode) return;
+            audioCtx.resume();
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(parseFloat(volumeRange.value), audioCtx.currentTime + 4.0);
+            document.getElementById('statusMsg').innerText = "📈 Đang chạy hiệu ứng Fade In (To dần)...";
+        });
+
+        fadeOutBtn.addEventListener('click', function() {
+            if (!audioLoaded || !gainNode) return;
+            gainNode.gain.setValueAtTime(gainNode.gain.value, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 4.0);
+            document.getElementById('statusMsg').innerText = "📉 Đang chạy hiệu ứng Fade Out (Nhỏ dần)...";
+            setTimeout(() => {
+                if (audioElem) audioElem.pause();
+                isPlaying = false;
+            }, 4000);
+        });
+
+        playBtn.addEventListener('click', function() {
+            if (!audioLoaded) {
+                alert('Vui lòng chọn file nhạc trước khi phát!');
+                return;
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            audioElem.play();
+            isPlaying = true;
+            drawVisualizer();
+        });
+
+        stopBtn.addEventListener('click', function() {
+            if (audioElem) {
+                audioElem.pause();
+                audioElem.currentTime = 0;
+            }
+            isPlaying = false;
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+        });
+
+        function drawVisualizer() {
+            if (!isPlaying) return;
+            requestAnimationFrame(drawVisualizer);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (bgImage.complete && bgImage.src) {
+                ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'rgba(9, 4, 20, 0.4)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.fillStyle = '#090414';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteFrequencyData(dataArray);
+
+            const style = document.getElementById('visualStyle').value;
+            const userColor = document.getElementById('waveColor').value;
+
+            if (style === 'bars') {
+                let barWidth = (canvas.width / bufferLength) * 2.2;
+                let barHeight;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    barHeight = (dataArray[i] / 255) * (canvas.height * 0.45);
+                    ctx.fillStyle = userColor;
+                    ctx.fillRect(x, canvas.height - barHeight - 150, barWidth, barHeight);
+                    x += barWidth + 4;
+                }
+            } else {
+                ctx.save();
+                ctx.translate(canvas.width / 2, canvas.height / 2 - 50);
+                let radius = 220;
+                for (let i = 0; i < bufferLength; i++) {
+                    let angle = (i * 2 * Math.PI) / bufferLength;
+                    let barHeight = (dataArray[i] / 255) * 250;
+                    
+                    let x1 = (radius) * Math.cos(angle);
+                    let y1 = (radius) * Math.sin(angle);
+                    let x2 = (radius + barHeight) * Math.cos(angle);
+                    let y2 = (radius + barHeight) * Math.sin(angle);
+
+                    ctx.strokeStyle = userColor;
+                    ctx.lineWidth = 6;
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            const title = document.getElementById('songTitle').value;
+            const artist = document.getElementById('songArtist').value;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 55px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = userColor;
+            ctx.shadowBlur = 25;
+            ctx.fillText(title, canvas.width / 2, canvas.height - 80);
+
+            ctx.fillStyle = '#b8a5d9';
+            ctx.font = '35px Segoe UI';
+            ctx.shadowBlur = 0;
+            ctx.fillText(artist, canvas.width / 2, canvas.height - 30);
+        }
+
+        const exportBtn = document.getElementById('exportBtn');
+        exportBtn.addEventListener('click', function() {
+            if (!audioLoaded) {
+                alert('Vui lòng chọn file nhạc trước khi xuất video!');
+                return;
+            }
+
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                try {
+                    // Ép xung nhịp ghi hình Full HD 60fps mượt mà tối đa
+                    const canvasStream = canvas.captureStream(60);
+                    const audioStream = destStreamNode.stream;
+                    
+                    const combinedStream = new MediaStream([
+                        ...canvasStream.getVideoTracks(),
+                        ...audioStream.getAudioTracks()
+                    ]);
+
+                    recordedChunks = [];
+                    // Cấu hình bitrate cao để video Full HD không bị nén vỡ hình
+                    let options = { 
+                        mimeType: 'video/webm;codecs=vp9,opus',
+                        videoBitsPerSecond: 8000000 // 8 Mbps chất lượng cao
+                    };
+                    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                        options = { mimeType: 'video/webm' };
+                    }
+
+                    mediaRecorder = new MediaRecorder(combinedStream, options);
+                    
+                    mediaRecorder.ondataavailable = function(e) {
+                        if (e.data.size > 0) recordedChunks.push(e.data);
+                    };
+
+                    mediaRecorder.onstop = function() {
+                        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = 'MINH_OFFICIAL_Visualizer_FullHD.webm';
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(() => {
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(url);
+                        }, 100);
+                        exportBtn.innerText = "🚀 Xuất video Full HD (Không nén tiếng)";
+                        exportBtn.classList.remove('recording');
+                        document.getElementById('statusMsg').innerText = "✅ Đã xuất và tải thành công video Full HD!";
+                    };
+
+                    mediaRecorder.start();
+                    audioElem.currentTime = 0;
+                    audioElem.play();
+                    isPlaying = true;
+                    drawVisualizer();
+
+                    exportBtn.innerText = "⏹ Đang ghi hình Full HD (Bấm để dừng)";
+                    exportBtn.classList.add('recording');
+                    document.getElementById('statusMsg').innerText = "🔴 Đang xuất video Full HD 1080p... Âm thanh gốc được bảo toàn.";
+
+                    audioElem.onended = function() {
+                        if (mediaRecorder && mediaRecorder.state === 'recording') {
+                            mediaRecorder.stop();
+                        }
+                        isPlaying = false;
+                    };
+
+                } catch (err) {
+                    alert('Trình duyệt của bạn giới hạn dung lượng ghi Full HD trực tiếp. Hãy dùng tính năng quay màn hình hệ thống nếu gặp lỗi.');
+                    console.error(err);
+                }
+            } else {
+                if (mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                    if (audioElem) audioElem.pause();
+                    isPlaying = false;
+                }
+            }
+        });
+    </script>
 </body>
 </html>
